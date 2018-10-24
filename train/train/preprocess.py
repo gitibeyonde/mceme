@@ -2,11 +2,19 @@ import glob
 from scipy.io import wavfile
 import matplotlib.pyplot as plt
 from PIL import Image
-import os
+import os,cv2
 #read wave file
 def readwave(file):
     sr,data = wavfile.read(file)
     return sr,data
+
+def imagepreprocess(image,height,width):
+    i = 0 
+    current = cv2.imread(image)
+    gray = cv2.cvtColor(current, cv2.COLOR_BGR2GRAY)
+    res = cv2.resize(gray, dsize=(height,width), interpolation=cv2.INTER_CUBIC)       
+    res = res/255.0
+    return res 
 
 def graphspectogram(wav_file):
     sr,data = readwave(wav_file)

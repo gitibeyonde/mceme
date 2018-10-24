@@ -5,17 +5,17 @@ import cv2
 import glob
 
 class prediction:
-    def __init__(self,model_path,model_weights,height,width,test_path):
+    def __init__(self,model_path,model_weights,height,width,test_path=None):
         init_op = tf.initialize_all_variables()
         self.sess = tf.InteractiveSession()
         self.sess.run(init_op)
-        self.test_path = test_path
-        self.testlabels = None
-        self.testimages = glob.glob(self.test_path[0]+'*.jpg')
-        
-        self.testimages1 = glob.glob(self.test_path[1]+'*.jpg')
-        self.testimages.extend(self.testimages1)
-        self.imagestest = np.zeros([len(self.testimages),height,width])
+        if test_path!=None:
+            self.test_path = test_path
+            self.testlabels = None
+            self.testimages = glob.glob(self.test_path[0]+'*.jpg')
+            self.testimages1 = glob.glob(self.test_path[1]+'*.jpg')
+            self.testimages.extend(self.testimages1)
+            self.imagestest = np.zeros([len(self.testimages),height,width])
         json_file = open(model_path, 'r')
         loaded_model_json = json_file.read()
         json_file.close()
@@ -56,10 +56,16 @@ class prediction:
         for i in range(len(col)):
             f.write('1 ')
         
-    def predict(self):
-        predictions = self.model.predict(self.imagestest)
-        new_predictions = [np.argmax(i) for i in predictions]
-        return new_predictions
+    def predict(self,image=None,height=32,width=32):
+        if not image.any():
+            predictions = self.model.predict(self.imagestest)
+            new_predictions = [np.argmax(i) for i in predictions]
+            return new_predictions
+        else:
+            imagestest = np.zeros([1,height,width])
+            imagestest[0] = image
+            predictions = self.model.predict(imagestest)    
+            return predictions
     
     def printloss(self):
         test_loss, test_acc = self.model.evaluate(self.imagestest, self.testlabels)
@@ -78,4 +84,9 @@ class prediction:
             img = cv2.imread(self.testimages[i[0]])
             cv2.imshow('frame',img)
             if cv2.waitKey(0) & 0xFF == ord('q'):
-                continue            
+                continue   
+                
+        
+        
+    
+                     
