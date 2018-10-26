@@ -15,7 +15,7 @@ class prediction:
             self.testimages = glob.glob(self.test_path[0]+'*.jpg')
             self.testimages1 = glob.glob(self.test_path[1]+'*.jpg')
             self.testimages.extend(self.testimages1)
-            self.imagestest = np.zeros([len(self.testimages),height,width])
+            self.imagestest = np.zeros([len(self.testimages),height,width+width])
         json_file = open(model_path, 'r')
         loaded_model_json = json_file.read()
         json_file.close()
@@ -33,6 +33,19 @@ class prediction:
      
     def scaletest(self):
         self.imagestest = self.imagestest/255.0 
+    
+    def mixedprep(self,secondry):
+        i = 0
+        for fname in self.testimages:
+            second = cv2.imread(secondry[i])
+            current = cv2.imread(fname)
+            gray = cv2.cvtColor(current, cv2.COLOR_BGR2GRAY)
+            gray1 = cv2.cvtColor(second, cv2.COLOR_BGR2GRAY)
+            res1 = cv2.resize(gray, dsize=(32,32), interpolation=cv2.INTER_CUBIC)
+            res2 = cv2.resize(gray1, dsize=(32,32), interpolation=cv2.INTER_CUBIC)
+            self.imagestest[i] = np.concatenate((res1,res2),axis=1)
+            i = i+1
+        self.scaletest() 
     
     def preprocesstesting(self):
         i = 0 
@@ -57,7 +70,7 @@ class prediction:
             f.write('1 ')
         
     def predict(self,image=None,height=32,width=32):
-        if not image.any():
+        if image==None:#change to image.any() in other case
             predictions = self.model.predict(self.imagestest)
             new_predictions = [np.argmax(i) for i in predictions]
             return new_predictions

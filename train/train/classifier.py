@@ -26,10 +26,10 @@ class classifier:
         self.trainimages = glob.glob(self.train_path[0]+'*.jpg')
         self.trainimages1 = glob.glob(self.train_path[1]+'*.jpg')
         self.trainimages.extend(self.trainimages1)
-        self.imagestrain = np.zeros([len(self.trainimages),self.height,self.width])
+        self.imagestrain = np.zeros([len(self.trainimages),self.height,self.width*2])
         self.trainlabels = None
         self.model = keras.Sequential([
-        keras.layers.Flatten(input_shape=(32, 32)),
+        keras.layers.Flatten(input_shape=(32, 64)),
         keras.layers.Dense(128, activation=tf.nn.relu),
         keras.layers.Dense(2, activation=tf.nn.softmax)
         ])
@@ -60,6 +60,21 @@ class classifier:
     def scaletrain(self):
         self.imagestrain = self.imagestrain/255.0
           
+    def mixedprep(self,secondry):
+        i = 0
+        for fname in self.trainimages:
+            second = cv2.imread(secondry[i])
+            current = cv2.imread(fname)
+            gray = cv2.cvtColor(current, cv2.COLOR_BGR2GRAY)
+            gray1 = cv2.cvtColor(second, cv2.COLOR_BGR2GRAY)
+            res1 = cv2.resize(gray, dsize=(32,32), interpolation=cv2.INTER_CUBIC)
+            res2 = cv2.resize(gray1, dsize=(32,32), interpolation=cv2.INTER_CUBIC)
+            res = np.concatenate((res1,res2),axis=1)
+            self.imagestrain[i] = res
+            i = i+1
+        self.scaletrain() 
+              
+          
     def preprocesstraining(self):
         i = 0
         for fname in self.trainimages:
@@ -75,10 +90,10 @@ class classifier:
     
     def save(self):
         model_json = self.model.to_json()
-        with open("model.json", "w") as json_file:
+        with open("model3.json", "w") as json_file:
             json_file.write(model_json)
 # serialize weights to HDF5
-        self.model.save_weights("model.h5")
+        self.model.save_weights("model3.h5")
         print("Saved model to disk")
         
         
