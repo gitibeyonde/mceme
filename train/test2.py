@@ -33,7 +33,6 @@ def twicevaluepredict(path):
             lift = lift+1
         else:
             nolift = nolift+1
-        
     return lift,nolift            
         
 if __name__=="__main__":

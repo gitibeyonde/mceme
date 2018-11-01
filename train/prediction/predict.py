@@ -9,13 +9,17 @@ class prediction:
         init_op = tf.initialize_all_variables()
         self.sess = tf.InteractiveSession()
         self.sess.run(init_op)
+        self.height = height
+        self.width = width
         if test_path!=None:
             self.test_path = test_path
             self.testlabels = None
-            self.testimages = glob.glob(self.test_path[0]+'*.jpg')
-            self.testimages1 = glob.glob(self.test_path[1]+'*.jpg')
-            self.testimages.extend(self.testimages1)
-            self.imagestest = np.zeros([len(self.testimages),height,width+width])
+            self.testimages = list()
+            for i in test_path:
+                print i
+                self.testimages.extend(glob.glob(i+'*.jpg'))
+            print len(self.testimages)
+            self.imagestest = np.zeros([len(self.testimages),height,width])
         json_file = open(model_path, 'r')
         loaded_model_json = json_file.read()
         json_file.close()
@@ -41,8 +45,8 @@ class prediction:
             current = cv2.imread(fname)
             gray = cv2.cvtColor(current, cv2.COLOR_BGR2GRAY)
             gray1 = cv2.cvtColor(second, cv2.COLOR_BGR2GRAY)
-            res1 = cv2.resize(gray, dsize=(32,32), interpolation=cv2.INTER_CUBIC)
-            res2 = cv2.resize(gray1, dsize=(32,32), interpolation=cv2.INTER_CUBIC)
+            res1 = cv2.resize(gray, dsize=(self.height,self.width), interpolation=cv2.INTER_CUBIC)
+            res2 = cv2.resize(gray1, dsize=(self.height,self.width), interpolation=cv2.INTER_CUBIC)
             self.imagestest[i] = np.concatenate((res1,res2),axis=1)
             i = i+1
         self.scaletest() 
@@ -52,22 +56,25 @@ class prediction:
         for fname in self.testimages:
             current = cv2.imread(fname)
             gray = cv2.cvtColor(current, cv2.COLOR_BGR2GRAY)
-            res = cv2.resize(gray, dsize=(32,32), interpolation=cv2.INTER_CUBIC)
+            res = cv2.resize(gray, dsize=(self.height,self.width), interpolation=cv2.INTER_CUBIC)
             self.imagestest[i] = res
             i = i+1        
         self.scaletest() 
       
+    
     def create_labels(self):
-        col_dir = self.test_path[0]+'*.jpg'
-        col = glob.glob(col_dir)
+        count = 0
+        label = 0
         f = open('test_labels.txt','wb')
-        for i in range(len(col)):
-            f.write('0 ')
-        
-        col_dir = self.test_path[1]+'*.jpg'
-        col = glob.glob(col_dir)
-        for i in range(len(col)):
-            f.write('1 ')
+        for j in self.test_path:
+            if count>4:
+                label = 1
+            col_dir = j+'*.jpg'
+            col = glob.glob(col_dir)
+            for i in range(len(col)):
+                f.write(str(label)+" ")
+            count = count+1
+    
         
     def predict(self,image=None,height=32,width=32):
         if image==None:#change to image.any() in other case
