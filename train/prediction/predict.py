@@ -3,6 +3,7 @@ import numpy as np
 import tensorflow as tf
 import cv2
 import glob
+import keras.backend as K
 
 class prediction:
     def __init__(self,model_path,model_weights,height,width,test_path=None):
@@ -16,9 +17,9 @@ class prediction:
             self.testlabels = None
             self.testimages = list()
             for i in test_path:
-                print i
+                print (i)
                 self.testimages.extend(glob.glob(i+'*.jpg'))
-            print len(self.testimages)
+            print (len(self.testimages))
             self.imagestest = np.zeros([len(self.testimages),height,width])
         json_file = open(model_path, 'r')
         loaded_model_json = json_file.read()
@@ -29,6 +30,9 @@ class prediction:
         self.model.compile(optimizer=tf.train.AdamOptimizer(), 
               loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])
+        self.f = K.function([self.model.layers[0].input, K.learning_phase()],
+               [self.model.layers[-1].output])
+
         print("Loaded model from disk")
      
     def intialiselabels(self):
@@ -63,33 +67,63 @@ class prediction:
       
     
     def create_labels(self):
+        label = 0
+        f = open('test_labels.txt','wb')
+        for j in self.test_path:
+            col_dir = j+'*.jpg'
+            col = glob.glob(col_dir)
+            for i in range(len(col)):
+                f.write(str(label)+" ")
+            label = label+1
+
+
+    def predict_with_uncertainity(x=None, n_iter=10):
+        result = np.zeros((n_iter,) + x.shape)
+
+        for iter in range(n_iter):
+            result[iter] = self.f(x, 1)
+
+        prediction = result.mean(axis=0)
+        uncertainty = result.var(axis=0)
+        return prediction, uncertainty
+
+    def create_sep_labels(self):
         count = 0
         label = 0
         f = open('test_labels.txt','wb')
         for j in self.test_path:
-            if count>4:
+            if count==1:
                 label = 1
+            elif count ==6:
+                label = 2
+            elif count ==6:
+                label = 2
+            elif count ==10:
+                label = 3
             col_dir = j+'*.jpg'
             col = glob.glob(col_dir)
             for i in range(len(col)):
                 f.write(str(label)+" ")
             count = count+1
     
+    def prdictr(self,image=None,height=32,width=32):
+        imagestest = np.zeros([1,height,width])
+        imagestest[0] = image
+        predictions = self.model.predict(imagestest)
+        prediction = [np.argmax(i) for i in predictions]    
+        return prediction
+    
         
     def predict(self,image=None,height=32,width=32):
-        if image==None:#change to image.any() in other case
-            predictions = self.model.predict(self.imagestest)
-            new_predictions = [np.argmax(i) for i in predictions]
-            return new_predictions
-        else:
-            imagestest = np.zeros([1,height,width])
-            imagestest[0] = image
-            predictions = self.model.predict(imagestest)    
-            return predictions
-    
+        
+        predictions = self.model.predict(self.imagestest)
+        new_predictions = [np.argmax(i) for i in predictions]
+        return predictions
+        
+            
     def printloss(self):
         test_loss, test_acc = self.model.evaluate(self.imagestest, self.testlabels)
-        print test_loss,test_acc
+        print (test_loss,test_acc)
     
     def printconfusionmatrix(self):
         new_predictions = self.predict()
@@ -100,13 +134,8 @@ class prediction:
         new_predictions = self.predict()
         d = np.argwhere(self.test_labels!=new_predictions)
         for i in d:
-            print self.testimages[i[0]]
+            print (self.testimages[i[0]])
             img = cv2.imread(self.testimages[i[0]])
             cv2.imshow('frame',img)
             if cv2.waitKey(0) & 0xFF == ord('q'):
                 continue   
-                
-        
-        
-    
-                     

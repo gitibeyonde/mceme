@@ -24,9 +24,9 @@ class classifier:
         self.width = width
         self.trainimages = list()
         for i in train_path:
-            print i
+            print (i)
             self.trainimages.extend(glob.glob(i+'*.jpg'))
-        print len(self.trainimages)    
+        print (len(self.trainimages))    
             
         self.imagestrain = np.zeros([len(self.trainimages),self.height,self.width])
         self.trainlabels = None
@@ -45,7 +45,7 @@ class classifier:
     def intialiselables(self):
         f = open('train_labels.txt')
         self.trainlabels = np.array([int(j) for j in f.read().split(' ')[:-1]])
-        print self.trainlabels.shape
+        print (self.trainlabels.shape)
     
     def create_labels(self):
         label = 0
@@ -86,7 +86,7 @@ class classifier:
             res = cv2.resize(gray, dsize=(self.height,self.width), interpolation=cv2.INTER_CUBIC)
             self.imagestrain[i] = res
             i = i+1
-        print len(self.trainimages)   
+        print (len(self.trainimages))   
         self.scaletrain()
               
     def train(self,epochs=500):
