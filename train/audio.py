@@ -16,6 +16,18 @@ import contextlib
 
 
 CLIP_TIME = 3
+CHUNK = 4096
+CAT = ['GP OF MEN','GP OF MEN','VEHICLE','VEHICLE']
+FORMAT = pyaudio.paInt16
+CHANNELS = 1
+RATE = 44100
+RECORD_SECONDS = CLIP_TIME
+WAVE_OUTPUT_FILENAME = "output.wav"
+new_predict = prediction(model_path='..\\models\\architecture\\model7.json',model_weights='..\\models\\weights\\model7.h5'
+		                                      ,height=32,width=32)
+show_result = False
+curr_result = ''
+check_time = 1.8
 
 def draw_men():
     imgpng = Image.open("men.png")
@@ -35,26 +47,12 @@ def draw_vehicle():
     plt.close()    
 
 
-new_predict = prediction(model_path='model6.json',model_weights='model6.h5'
-		                                      ,height=32,width=32)
 
-
-
-show_result = False
-curr_result = ''
 
 try:
 	while True:
-		CHUNK = 256
-		CAT = ['GP OF MEN','VEHICLE']
-		FORMAT = pyaudio.paInt16
-		CHANNELS = 1
-		RATE = 44100
-		RECORD_SECONDS = CLIP_TIME
-		WAVE_OUTPUT_FILENAME = "output.wav"
-
+	
 		p = pyaudio.PyAudio()
-
 		stream = p.open(format=FORMAT,
 		                channels=CHANNELS,
 		                rate=RATE,
@@ -93,8 +91,9 @@ try:
 		    rate = f.getframerate()
 		    duration = frames / float(rate)
 		    print (duration)
-		    if duration<1.8:
+		    if duration<check_time:
     			curr_result = ''
+    			continue
 
 		check =preprocess.wav_to_spec('ll/')	
 		if check==0:
@@ -115,10 +114,7 @@ try:
 
 		if CAT[result[0]]==curr_result:
 			show_result = True
-		elif result[0]==0 and duration >1.5:
-			show_result = True
-			
-		else:
+		else:	
 			show_result = False
 			curr_result = CAT[result[0]]	
 
@@ -127,10 +123,10 @@ try:
 			print ("*****************************************************************************************")
 			print (CAT[result[0]])
 			print ("*****************************************************************************************")
-			
-			if result[0]==0:
+			show_result ==False
+
+			if result[0]==0 or result[0]==1:
 				subprocess.Popen([sys.executable,"C:\\Users\\siddharth\\Documents\\ai\\popup\\men_alert.py"])
-				
 			else:
 				subprocess.Popen([sys.executable, "C:\\Users\\siddharth\\Documents\\ai\\popup\\vehicle_alert.py"])
 			
