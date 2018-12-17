@@ -19,7 +19,7 @@ from threading import Thread
 import cmd
 
 
-path = 'C:\\Users\\siddharth\\Documents\\ai\\doppler audio\\test_audio\\'
+path = '..ai/doppler audio/test_audio/'
 music_files = [path+'gp_of_men.wav',path+'vehicle.wav',path+'hy_veh.wav']
 CLIP_TIME = 2.5
 CHUNK = 4096

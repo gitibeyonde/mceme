@@ -1,33 +1,75 @@
 from subprocess import call
 from train import preprocess
 from prediction.predict import prediction
-import cv2
+import cv2,os
 import pyaudio
 import wave
 import threading
 import sys
-from PIL import Image
+from PIL import Image	
 import subprocess
 import logging
 import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import contextlib
+import keyboard
 
 
-CLIP_TIME = 3
+CLIP_TIME = 2
 CHUNK = 4096
-CAT = ['GP OF MEN','GP OF MEN','VEHICLE','VEHICLE']
+CAT = ['GP OF MEN','VEHICLE','VEHICLE']
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 44100
 RECORD_SECONDS = CLIP_TIME
 WAVE_OUTPUT_FILENAME = "output.wav"
-new_predict = prediction(model_path='..\\models\\architecture\\model7.json',model_weights='..\\models\\weights\\model7.h5'
+new_predict = prediction(model_path='../models/architecture/model12.json',model_weights='../models/weights/model12.h5'
 		                                      ,height=32,width=32)
 show_result = False
 curr_result = ''
-check_time = 1.8
+check_time = 1
+result_count = 0
+max_count = 1
+gp = 'men_alert'
+crawl = 'vehicle_alert'
+vehiclecount = 0
+
+def ongp():
+	print ("ongpcalled")
+	global CAT
+	global gp,crawl
+	CAT = ['GP OF MEN','GP OF MEN','GP OF MEN']
+	gp = 'men_alert'
+	crawl = 'men_alert'
+
+
+def on_press_reaction(event):
+	print ("recording renewed")
+	global CAT
+	global gp,crawl
+	if event.name=='g':
+		CAT = ['GP OF MEN','GP OF MEN','GP OF MEN']
+		gp = 'men_alert'
+		crawl = 'men_alert'
+	elif event.name=='c':
+		CAT = ['CRWAL','CRWAL']
+		gp = 'crawl'
+		crawl = 'crawl'
+	elif event.name=='v':
+		CAT = ['VEHICLE','VEHICLE','VEHICLE']
+		gp = 'vehicle_alert'
+		crawl = 'vehicle_alert'
+	elif event.name=='n':
+		CAT = ['GP OF MEN','CRWAL']	
+		gp = 'men_alert'
+		crawl = 'crawl'
+	elif event.name=='p':
+		CAT = ['GP OF MEN','VEHICLE','VEHICLE']	
+		gp = 'men_alert'
+		crawl = 'vehicle_alert'
+
+
 
 def draw_men():
     imgpng = Image.open("men.png")
@@ -36,7 +78,6 @@ def draw_men():
     plt.draw()
     plt.pause(CLIP_TIME*2) # pause how many seconds
     plt.close()
-
  
 def draw_vehicle():
     imgpng = Image.open("vehicle.png")
@@ -46,8 +87,7 @@ def draw_vehicle():
     plt.pause(CLIP_TIME*2) # pause how many seconds
     plt.close()    
 
-
-
+keyboard.on_press(on_press_reaction)
 
 try:
 	while True:
@@ -81,54 +121,70 @@ try:
 		wf.close()
 		
 
-		call(["sox",WAVE_OUTPUT_FILENAME,"-n","noiseprof","noise.prof"])
-		call(["sox",WAVE_OUTPUT_FILENAME,"noise_rem.wav","noisered","noise.prof","0.21"])
-		call(["sox","noise_rem.wav","ll/out.wav","silence","1","0.1","1%","-1","0.1","1%"])
+		call(["sox",WAVE_OUTPUT_FILENAME,"noise_rem.wav","noisered","live/noise2.prof","0.21"])
+		call(["sox","noise_rem.wav","live/out.wav","silence","1","0.1","2%","-1","0.1","2%"])
 
 
-		with contextlib.closing(wave.open('ll/out.wav','r')) as f:
+		with contextlib.closing(wave.open('live/out.wav','r')) as f:
 		    frames = f.getnframes()
 		    rate = f.getframerate()
 		    duration = frames / float(rate)
 		    print (duration)
 		    if duration<check_time:
     			curr_result = ''
+    			result_count = 0
     			continue
-
-		check =preprocess.wav_to_spec('ll/')	
+		call(["sox",'live/out.wav','live/trimout.wav',"trim",'0',str(check_time)])
+		check = preprocess.graphspectogram('live/trimout.wav')	
 		if check==0:
 			print ("-----------------------silence or noise------------------------------------------")
 			curr_result = ''
+			result_count = 0
 			continue
 		#new_1 = glob.glob('/Users/techsid/Documents/anL/*.jpg')
 		# new_2 = glob.glob('/Users/techsid/Documents/aL/*.jpg')
 		# new_1.extend(new_2)
 
-		current = cv2.imread('ll/out.wav.jpg')
+		current = cv2.imread('live/trimout.wav.jpg')
 		gray = cv2.cvtColor(current, cv2.COLOR_BGR2GRAY)
 		res = cv2.resize(gray, dsize=(32,32), interpolation=cv2.INTER_CUBIC)
 		result = new_predict.prdictr(image = res)
 		#result,uncertainity = new_predict.predict_with_uncertainity(res)
 
-		
-
+		print (CAT[result[0]])
+		print (result_count)
+		print (curr_result)
 		if CAT[result[0]]==curr_result:
-			show_result = True
-		else:	
+			result_count = result_count+1
+			if result_count==max_count:
+				show_result = True
+		else:
+			result_count = 0	
 			show_result = False
 			curr_result = CAT[result[0]]	
 
 		if show_result ==True:
 			
+			print (CAT[result[0]])
 			print ("*****************************************************************************************")
 			print (CAT[result[0]])
 			print ("*****************************************************************************************")
 			show_result ==False
+			result_count = 0
+			curr_result = ''
 
-			if result[0]==0 or result[0]==1:
-				subprocess.Popen([sys.executable,"C:\\Users\\siddharth\\Documents\\ai\\popup\\men_alert.py"])
+			if result[0]==0 :
+				vehiclecount = 0
+				subprocess.Popen([sys.executable,"..\\ai\\popup\\"+gp+".py"])
 			else:
-				subprocess.Popen([sys.executable, "C:\\Users\\siddharth\\Documents\\ai\\popup\\vehicle_alert.py"])
+				vehiclecount = vehiclecount + 1
+				subprocess.Popen([sys.executable, "..\\ai\\popup\\"+crawl+".py"])
+				if vehiclecount>4:
+					#ongp()
+					vehiclecount = 0
+				
+
 			
 except KeyboardInterrupt:
 	pass	
+
