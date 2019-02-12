@@ -6,7 +6,6 @@ import matplotlib.pyplot as plt
 from numpy import dtype
 import tensorflow as tf
 from tensorflow import keras
-from keras.callbacks import TensorBoard
 from time import time
 from tensorflow.contrib.metrics.python.ops.confusion_matrix_ops import confusion_matrix
 from scipy.io import wavfile
@@ -40,7 +39,7 @@ class classifier:
               loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])  
         #self.model = tf.initialize_all_variables()
-        self.tensorboard = TensorBoard(log_dir="logs/{}".format(time())) 
+         
             
     def intialiselables(self):
         f = open('train_labels.txt')
@@ -90,7 +89,7 @@ class classifier:
         self.scaletrain()
               
     def train(self,epochs=500):
-        self.model.fit(self.imagestrain, self.trainlabels, epochs=epochs, callbacks=[self.tensorboard])
+        self.model.fit(self.imagestrain, self.trainlabels, epochs=epochs)
     
     def save(self):
         model_json = self.model.to_json()

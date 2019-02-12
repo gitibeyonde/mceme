@@ -1,9 +1,8 @@
-from keras.models import model_from_json
+from tensorflow.keras.models import model_from_json
 import numpy as np
 import tensorflow as tf
 import cv2
 import glob
-import keras.backend as K
 
 class prediction:
     def __init__(self,model_path,model_weights,height,width,test_path=None):
@@ -30,8 +29,6 @@ class prediction:
         self.model.compile(optimizer=tf.train.AdamOptimizer(), 
               loss='sparse_categorical_crossentropy',
               metrics=['accuracy'])
-        self.f = K.function([self.model.layers[0].input, K.learning_phase()],
-               [self.model.layers[-1].output])
 
         print("Loaded model from disk")
      
