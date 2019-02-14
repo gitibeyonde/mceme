@@ -9,7 +9,6 @@ from PIL import Image
 import os,cv2
 import numpy as np
 import fnmatch
-from skimage.io import imread
 #read wave file
 def readwave(file):
     sr,data = wavfile.read(file)
@@ -35,7 +34,7 @@ def plot_images(folder):
             ax.set_title(filename,size=3)
             ax.axes.xaxis.set_ticklabels([])
             ax.axes.yaxis.set_ticklabels([])
-            im = imread(os.path.join(root, filename))
+            im = cv2.imread(os.path.join(root, filename))
             i+=1
             imgplot = ax.imshow(im)
     return
@@ -89,7 +88,7 @@ def getspecdata(wav_file):
     nfft = 256
     sf = 256
     pxx, freqs, bins, im = plt.specgram(data, nfft, sf)
-    print pxx.shape
+    print (pxx.shape)
     return pxx
 
 

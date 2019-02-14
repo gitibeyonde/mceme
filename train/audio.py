@@ -13,7 +13,6 @@ import numpy as np
 import matplotlib
 import matplotlib.pyplot as plt
 import contextlib
-import keyboard
 
 
 CLIP_TIME = 2
@@ -44,33 +43,6 @@ def ongp():
 	crawl = 'men_alert'
 
 
-def on_press_reaction(event):
-	print ("recording renewed")
-	global CAT
-	global gp,crawl
-	if event.name=='g':
-		CAT = ['GP OF MEN','GP OF MEN','GP OF MEN']
-		gp = 'men_alert'
-		crawl = 'men_alert'
-	elif event.name=='c':
-		CAT = ['CRWAL','CRWAL']
-		gp = 'crawl'
-		crawl = 'crawl'
-	elif event.name=='v':
-		CAT = ['VEHICLE','VEHICLE','VEHICLE']
-		gp = 'vehicle_alert'
-		crawl = 'vehicle_alert'
-	elif event.name=='n':
-		CAT = ['GP OF MEN','CRWAL']	
-		gp = 'men_alert'
-		crawl = 'crawl'
-	elif event.name=='p':
-		CAT = ['GP OF MEN','VEHICLE','VEHICLE']	
-		gp = 'men_alert'
-		crawl = 'vehicle_alert'
-
-
-
 def draw_men():
     imgpng = Image.open("men.png")
     ImageNumpyFormat =  np.asarray(imgpng)
@@ -86,8 +58,6 @@ def draw_vehicle():
     plt.draw()
     plt.pause(CLIP_TIME*2) # pause how many seconds
     plt.close()    
-
-keyboard.on_press(on_press_reaction)
 
 try:
 	while True:
