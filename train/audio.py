@@ -42,7 +42,6 @@ def ongp():
 	gp = 'men_alert'
 	crawl = 'men_alert'
 
-
 def draw_men():
     imgpng = Image.open("men.png")
     ImageNumpyFormat =  np.asarray(imgpng)
@@ -91,8 +90,14 @@ try:
 		wf.close()
 		
 
+<<<<<<< Updated upstream
 		call(["sox",WAVE_OUTPUT_FILENAME,"noise_rem.wav","noisered","live/noise2.prof","0.21"])
 		call(["sox","noise_rem.wav","live/out.wav","silence","1","0.1","2%","-1","0.1","2%"])
+=======
+		call(["sox",WAVE_OUTPUT_FILENAME,"-n","noiseprof","noise.prof"])
+		call(["sox",WAVE_OUTPUT_FILENAME,"noise_rem.wav","noisered","train/noise2.prof","0.21"])
+		call(["sox","noise_rem.wav","ll/out.wav","silence","1","0.1","2%","-1","0.1","2%"])
+>>>>>>> Stashed changes
 
 
 		with contextlib.closing(wave.open('live/out.wav','r')) as f:
@@ -104,8 +109,13 @@ try:
     			curr_result = ''
     			result_count = 0
     			continue
+<<<<<<< Updated upstream
 		call(["sox",'live/out.wav','live/trimout.wav',"trim",'0',str(check_time)])
 		check = preprocess.graphspectogram('live/trimout.wav')	
+=======
+		call(["sox",'ll/out.wav','ll/out1.wav',"trim",'0',str(check_time)])
+		check = preprocess.graphspectogram('ll/out1.wav')	
+>>>>>>> Stashed changes
 		if check==0:
 			print ("-----------------------silence or noise------------------------------------------")
 			curr_result = ''
@@ -115,7 +125,11 @@ try:
 		# new_2 = glob.glob('/Users/techsid/Documents/aL/*.jpg')
 		# new_1.extend(new_2)
 
+<<<<<<< Updated upstream
 		current = cv2.imread('live/trimout.wav.jpg')
+=======
+		current = cv2.imread('ll/out1.wav.jpg')
+>>>>>>> Stashed changes
 		gray = cv2.cvtColor(current, cv2.COLOR_BGR2GRAY)
 		res = cv2.resize(gray, dsize=(32,32), interpolation=cv2.INTER_CUBIC)
 		result = new_predict.prdictr(image = res)
@@ -145,10 +159,17 @@ try:
 
 			if result[0]==0 :
 				vehiclecount = 0
+<<<<<<< Updated upstream
 				subprocess.Popen([sys.executable,"..\\ai\\popup\\"+gp+".py"])
 			else:
 				vehiclecount = vehiclecount + 1
 				subprocess.Popen([sys.executable, "..\\ai\\popup\\"+crawl+".py"])
+=======
+				subprocess.Popen([sys.executable,"C:\\Users\\siddharth\\Documents\\ai\\popup\\"+gp+".py"])
+			else:
+				vehiclecount = vehiclecount + 1
+				subprocess.Popen([sys.executable, "C:\\Users\\siddharth\\Documents\\ai\\popup\\"+crawl+".py"])
+>>>>>>> Stashed changes
 				if vehiclecount>4:
 					#ongp()
 					vehiclecount = 0
