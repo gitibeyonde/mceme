@@ -1,14 +1,21 @@
-
+import http.server
+import socketserver
+import urllib
+import io
 import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import logging
+import traceback
+
+
 logging.getLogger('tensorflow').setLevel(logging.DEBUG)
 
 ENGINE_LIFE=950
+PORT_NUMBER=8080
 
-df_train="file:///Users/aprateek/work/mceme/ai/tank_life/data.csv" #310 rows
-df_eval="file:///Users/aprateek/work/mceme/ai/tank_life/eval.csv" #310 rows
+df_train="./data.csv" #310 rows
+df_eval="./eval.csv" #310 rows
 
 
 COLUMNS=["Ser","EngHrs","Vibration","CoolantTemp","OilPressure"] #Ser,EngHrs,Vibration,CoolantTemp,OilPressure
@@ -69,15 +76,48 @@ prediction_input = {
           'OilPressure': [8.2,9.2]
      }
 
-def test_input_fn():    
-    dataset = tf.data.Dataset.from_tensors(prediction_input)    
-    return dataset
-     
-# Predict all our prediction_input
-pred_results = model.predict(input_fn=test_input_fn)
+print(prediction_input)
+   
+class Handler(http.server.SimpleHTTPRequestHandler):
 
-for pred in enumerate(pred_results):    
-    print(pred)  
-    print(pred[1]['predictions'])  
-    print("Engine remaining life is %d"%(900-pred[1]['predictions']))
-    
+    def do_GET(self):
+        self.connection.settimeout(1)
+        if self.path.endswith('/'):
+            self.send_response(200)
+            self.send_header('Content-type','text/html')
+            self.end_headers()
+            self.wfile.write(bytes('<html><head></head><body><h2>Predictive Maintenance of Tank Engine</h2><form action ="/" method="get"> \
+                              Vibration: <input type="text" name="vibration"><br> \
+                              Coolent Temp: <input type="text" name="coolent_temp"><br> \
+                              Oil Pressure: <input type="text" name="oil_pressure"><br> \
+                              <input type="submit" value="Submit"> \
+                              </form></body></html>', "utf8"))
+        else:
+            o = urllib.parse.urlparse(self.path)
+            q = urllib.parse.parse_qs(o.query)
+            prediction_input = {                
+                'Vibration': [float(q['vibration'][0])],
+                'CoolantTemp': [float(q['coolent_temp'][0])],
+                'OilPressure': [float(q['oil_pressure'][0])],
+            }
+            print(prediction_input)
+            
+            def test_input_fn():    
+                dataset = tf.data.Dataset.from_tensors(prediction_input)    
+                return dataset
+     
+            pred_results = model.predict(input_fn=test_input_fn)
+
+            for pred in enumerate(pred_results):    
+                print(pred)  
+                print(pred[1]['predictions'])  
+                print("Engine remaining life is %d"%(900-pred[1]['predictions']))
+
+        return
+
+try:
+    print('Server listening on port 8000...')
+    httpd = socketserver.TCPServer(('', 8000), Handler)
+    httpd.serve_forever()
+except KeyboardInterrupt:
+        httpd.socket.close()
