@@ -66,33 +66,25 @@ results = model.evaluate(steps=None,input_fn=lambda: input_fn(df_eval, batch_siz
 
 for key in results:   
     print("   {}, was: {}".format(key, results[key]))     
-   
-#"Vibration","CoolantTemp","OilPressure"
-#328,272,75,9.5
-#863,325,65,8.2 
-prediction_input = {                
-          'Vibration': [325, 272],                
-          'CoolantTemp': [65,75],                
-          'OilPressure': [8.2,9.2]
-     }
-
-print(prediction_input)
-   
+ 
 class Handler(http.server.SimpleHTTPRequestHandler):
 
     def do_GET(self):
+        global model
+        
         self.connection.settimeout(1)
-        if self.path.endswith('/'):
+        if self.path.endswith('/') or self.path.endswith('?'):
             self.send_response(200)
             self.send_header('Content-type','text/html')
             self.end_headers()
-            self.wfile.write(bytes('<html><head></head><body><h2>Predictive Maintenance of Tank Engine</h2><form action ="/" method="get"> \
-                              Vibration: <input type="text" name="vibration"><br> \
-                              Coolent Temp: <input type="text" name="coolent_temp"><br> \
-                              Oil Pressure: <input type="text" name="oil_pressure"><br> \
-                              <input type="submit" value="Submit"> \
-                              </form></body></html>', "utf8"))
+            with open('./index.html', 'r') as myfile:
+                html=myfile.read().replace('\n', '')
+            self.wfile.write(bytes(html, "utf8"))
         else:
+            self.send_response(200)
+            self.send_header('Content-type','text/html')
+            self.end_headers()
+            
             o = urllib.parse.urlparse(self.path)
             q = urllib.parse.parse_qs(o.query)
             prediction_input = {                
@@ -112,7 +104,17 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 print(pred)  
                 print(pred[1]['predictions'])  
                 print("Engine remaining life is %d"%(900-pred[1]['predictions']))
-
+                
+            with open('./result.html', 'r') as myfile:
+                html=myfile.read().replace('\n', '')
+                html=html.replace('$PREDICTED', str(pred[1]['predictions']))
+                html=html.replace('$REAL', str(q['engine_life'][0]))
+                if (float(pred[1]['predictions']) > float(q['engine_life'][0])):
+                    html=html.replace('$HEALTH', 'HEALTHY')
+                else:
+                    html=html.replace('$HEALTH', 'UNHEALTHY')
+                    
+            self.wfile.write(bytes(html, "utf8"))
         return
 
 try:
