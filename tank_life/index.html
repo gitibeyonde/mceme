@@ -1,0 +1,113 @@
+<html>
+<head></head>
+<link href='/bootstrap.min.css' rel='stylesheet' type='text/css'>
+<title>Predictive Maintenance of Tank Engine</title>
+<body  style="background-color: #eee">
+
+<div class="container">
+
+  <div class="row">
+	<div class="main col-md-3 col-sm-8 col-xs-8">
+	</div>
+	<div class="main col-md-6 col-sm-12 col-xs-12">
+		<div class="row">
+             </br>
+             </br>
+             </br>
+         </div>	
+	</div>
+ </div>
+ 
+  <div class="row">
+	<div class="main col-md-2 col-sm-6 col-xs-6">
+	</div>
+	<div class="main col-md-6 col-sm-12 col-xs-12">
+		<div class="row">
+             <h2>
+             Predictive Maintenance of Tank Engine
+             </h2>
+         </div>	
+	</div>
+ </div>
+ 
+  <div class="row">
+	<div class="main col-md-3 col-sm-8 col-xs-8">
+	</div>
+	<div class="main col-md-6 col-sm-12 col-xs-12">
+		<div class="row">
+             </br>
+             </br>
+         </div>	
+	</div>
+ </div>
+ 
+  <div class="row">
+	<div class="main col-md-2 col-sm-6 col-xs-6">
+	</div>
+	<div class="main col-md-6 col-sm-12 col-xs-12">
+		<div class="row">
+             <i>
+               Please input following parameters to know the health of your tank engine.
+             </i>
+         </div>	
+	</div>
+ </div>
+
+ 
+  <div class="row">
+	<div class="main col-md-3 col-sm-8 col-xs-8">
+	</div>
+	<div class="main col-md-6 col-sm-12 col-xs-12">
+		<div class="row">
+             </br>
+             </br>
+         </div>	
+	</div>
+ </div>
+ 
+<form action ="/" method="get">
+	<div class="form-group row">
+		<label for="engine_life" class="col-sm-2 col-form-label col-form-label-lg">Engine Life</label>
+		<div class="col-sm-6">
+	    		<input type="number" class="form-control" name="engine_life" aria-describedby="elHelp" value="234" placeholder="234" min="0" max="1000" step="1">
+		</div>
+	    <small id="elHelp" class="form-text text-muted">Real Engine Life in hours.</small>
+	</div>
+	
+	<div class="form-group row">
+		<label for="vibration" class="col-sm-2 col-form-label col-form-label-lg">Vibration</label>
+		<div class="col-sm-6">
+	    		<input type="number" class="form-control" name="vibration" aria-describedby="vibHelp" value="261" placeholder="261" min="50" max="500" step="1">
+		</div>
+	    <small id="vibHelp" class="form-text text-muted">Vibrations coming from engine.</small>
+	</div>
+	
+	<div class="form-group row">
+		<label for="coolent_temp" class="col-sm-2 col-form-label col-form-label-lg">Coolent Temp</label>
+		<div class="col-sm-6">
+	   		 <input type="number" class="form-control" name="coolent_temp" aria-describedby="ctHelp" value="55" placeholder="55" min="10" max="200" step="1">
+		</div>
+	    <small id="ctHelp" class="form-text text-muted">Coolent Temperature in degree Celsius.</small>
+	</div>
+	
+	<div class="form-group row">
+		<label for="oil_pressure" class="col-sm-2 col-form-label col-form-label-lg">Oil Pressure:</label>
+		<div class="col-sm-6">
+	    		<input type="decimal" class="form-control" name="oil_pressure" aria-describedby="opHelp" value="9.3" placeholder="9.3" min="1.0" max="20.0" step="0.01">
+		</div>
+	    <small id="opHelp" class="form-text text-muted">Oil pressure in Kg/cm2.</small>
+	</div>
+	<div class="form-group row">
+		<div class="col-sm-2">
+		</div>
+		<div class="col-sm-6">
+			<input type="submit" class="btn btn-success btn-block" value="Submit"> 
+		</div>
+	</div>
+</form>
+
+</div>
+</body>
+<script type="text/javascript" src="/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="/bootstrap.min.js"></script>
+</html>

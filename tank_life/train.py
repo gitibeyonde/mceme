@@ -7,6 +7,7 @@ import tensorflow as tf
 import matplotlib.pyplot as plt
 import logging
 import traceback
+import ntpath
 
 
 logging.getLogger('tensorflow').setLevel(logging.DEBUG)
@@ -73,7 +74,23 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         global model
         
         self.connection.settimeout(1)
-        if self.path.endswith('/') or self.path.endswith('?'):
+        if self.path.endswith('.png'):
+            self.send_response(200)
+            self.send_header('Content-type','text/html')
+            self.end_headers()
+            file = ntpath.basename(self.path)
+            with open(file, 'rb') as myfile:
+                html=myfile.read()
+            self.wfile.write(html)
+        elif self.path.endswith('.js') or self.path.endswith('.css'):
+            self.send_response(200)
+            self.send_header('Content-type','text/html')
+            self.end_headers()
+            file = ntpath.basename(self.path)
+            with open(file, 'r') as myfile:
+                html=myfile.read()
+            self.wfile.write(bytes(html, "utf8"))
+        elif self.path.endswith('/') or self.path.endswith('?'):
             self.send_response(200)
             self.send_header('Content-type','text/html')
             self.end_headers()
@@ -107,12 +124,20 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 
             with open('./result.html', 'r') as myfile:
                 html=myfile.read().replace('\n', '')
-                html=html.replace('$PREDICTED', str(pred[1]['predictions']))
+                html=html.replace('$PREDICTED', str(int(pred[1]['predictions'][0])))
                 html=html.replace('$REAL', str(q['engine_life'][0]))
+                
+                
+                html=html.replace('$VIBRATION', str(q['vibration'][0]))
+                html=html.replace('$COOLENTTEMP', str(q['coolent_temp'][0]))
+                html=html.replace('$OILPRESSURE', str(q['oil_pressure'][0]))
+                
                 if (float(pred[1]['predictions']) > float(q['engine_life'][0])):
                     html=html.replace('$HEALTH', 'HEALTHY')
+                    html=html.replace('$COLOR', 'green')
                 else:
                     html=html.replace('$HEALTH', 'UNHEALTHY')
+                    html=html.replace('$COLOR', 'red')
                     
             self.wfile.write(bytes(html, "utf8"))
         return
