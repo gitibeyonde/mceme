@@ -76,15 +76,23 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         self.connection.settimeout(1)
         if self.path.endswith('.png'):
             self.send_response(200)
-            self.send_header('Content-type','text/html')
+            self.send_header('Content-type','image/png')
             self.end_headers()
             file = ntpath.basename(self.path)
             with open(file, 'rb') as myfile:
                 html=myfile.read()
             self.wfile.write(html)
-        elif self.path.endswith('.js') or self.path.endswith('.css'):
+        elif self.path.endswith('.js') or self.path.endswith('.map'):
             self.send_response(200)
-            self.send_header('Content-type','text/html')
+            self.send_header('Content-type','text/javascript')
+            self.end_headers()
+            file = ntpath.basename(self.path)
+            with open(file, 'r') as myfile:
+                html=myfile.read()
+            self.wfile.write(bytes(html, "utf8"))
+        elif self.path.endswith('.css'):
+            self.send_response(200)
+            self.send_header('Content-type','text/css')
             self.end_headers()
             file = ntpath.basename(self.path)
             with open(file, 'r') as myfile:
@@ -95,9 +103,9 @@ class Handler(http.server.SimpleHTTPRequestHandler):
             self.send_header('Content-type','text/html')
             self.end_headers()
             with open('./index.html', 'r') as myfile:
-                html=myfile.read().replace('\n', '')
+                html=myfile.read()
             self.wfile.write(bytes(html, "utf8"))
-        else:
+        elif 'vibration' in self.path:
             self.send_response(200)
             self.send_header('Content-type','text/html')
             self.end_headers()
@@ -140,6 +148,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                     html=html.replace('$COLOR', 'red')
                     
             self.wfile.write(bytes(html, "utf8"))
+        else:
+            print("Unknown request " + self.path)
         return
 
 try:
