@@ -74,7 +74,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         global model
         
         self.connection.settimeout(1)
-        if self.path.endswith('.png'):
+        if self.path.endswith('.png') or self.path.endswith('.ico'):
             self.send_response(200)
             self.send_header('Content-type','image/png')
             self.end_headers()
@@ -131,7 +131,7 @@ class Handler(http.server.SimpleHTTPRequestHandler):
                 print("Engine remaining life is %d"%(900-pred[1]['predictions']))
                 
             with open('./result.html', 'r') as myfile:
-                html=myfile.read().replace('\n', '')
+                html=myfile.read()
                 html=html.replace('$PREDICTED', str(int(pred[1]['predictions'][0])))
                 html=html.replace('$REAL', str(q['engine_life'][0]))
                 
