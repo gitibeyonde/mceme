@@ -1,0 +1,39 @@
+<html>
+<head>
+<title>Login Page</title>
+<!-- Include CSS File Here -->
+<link rel="stylesheet" href="style.css"/>
+<!-- Include JS File Here -->
+<script src="login.js"></script>
+</head>
+<style>
+body {
+            background-image: url('tank3.png');
+			background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center 0.6;
+            background-attachment: fixed;
+            overflow: hidden;
+				
+        }
+
+</style>
+
+<body>
+<!--div class="container"-->
+<div class="main">
+<h2><u>USER LOGIN</u></h2>
+</br>
+<form id="form_id" method="post" name="myform">
+<label>User Name :</label>
+<input type="text" name="username" id="username"/>
+<label>Password :</label>
+<input type="password" name="password" id="password"/>
+
+<input type="button" value="Login" id="submit" onclick="validate()"/>
+</form>
+
+
+</div>
+</body>
+</html>

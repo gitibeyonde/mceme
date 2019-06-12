@@ -1,0 +1,16 @@
+<input type="file" id="i_file" value=""> 
+<input type="button" id="i_submit" value="Submit">
+<br>
+<img src="" width="200" style="display:none;" />
+<br>
+<div id="disp_tmp_path"></div>
+
+<script>
+$('#i_file').change( function(event) {
+    var tmppath = URL.createObjectURL(event.target.files[0]);
+    $("img").fadeIn("fast").attr('src',URL.createObjectURL(event.target.files[0]));
+
+    $("#disp_tmp_path").html("Temporary Path(Copy it and try pasting it in browser address bar) --> <strong>["+tmppath+"]</strong>");
+});
+
+</script>

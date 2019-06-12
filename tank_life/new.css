@@ -1,0 +1,50 @@
+
+	#power-gauge g.arc {
+		fill: #000000;
+	}
+
+	#power-gauge g.pointer {
+		fill: #FF0000;
+		stroke:#FF0000;
+	}
+	
+	#power-gauge g.label text {
+		text-anchor: middle;
+		font-size: 14px;
+		font-weight: bold;
+		fill: #000000;
+		font-family:arial;
+	}
+	#power-gauge1 g.arc {
+		fill: #000000;
+	}
+
+	#power-gauge1 g.pointer {
+		fill: #FF0000;
+		stroke:#FF0000;
+	}
+	
+	#power-gauge1 g.label text {
+		text-anchor: middle;
+		font-size: 14px;
+		font-weight: bold;
+		fill: #000000;
+		font-family:arial;
+	}
+
+#power-gauge2 g.arc {
+		fill: #000000;
+	}
+
+	#power-gauge2 g.pointer {
+		fill: #FF0000;
+		stroke:#FF0000;
+	}
+	
+	#power-gauge2 g.label text {
+		text-anchor: middle;
+		font-size: 14px;
+		font-weight: bold;
+		fill: #000000;
+		font-family:arial;
+	}

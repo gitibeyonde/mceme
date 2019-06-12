@@ -1,0 +1,111 @@
+<html>
+<head></head>
+<link href='/bootstrap.min.css' rel='stylesheet' type='text/css'>
+<title>Predictive Maintenance of Tank Engine</title>
+<body  style="background-color:olive;">
+
+<div class="container">
+
+
+ 
+  <div class="row" >
+	<div class="main col-md-2 col-sm-6 col-xs-6">
+	</div>
+	<div class="main col-md-6 col-sm-12 col-xs-12">
+		<center><div class="row" style="background-color:teal;color:white;height:70px;width:100%;">
+             <h1>
+             Predictive Maintenance of Tank Engine
+             </h1>
+         </div>	</center
+	</div>
+ </div>
+ 
+  <div class="row">
+	<div class="main col-md-3 col-sm-8 col-xs-8">
+	</div>
+	<div class="main col-md-6 col-sm-12 col-xs-12">
+		<div class="row">
+             </br>
+             </br>
+         </div>	
+	</div>
+ </div>
+ 
+  <div class="row">
+	<div class="main col-md-2 col-sm-6 col-xs-6">
+	</div>
+	<div class="main col-md-6 col-sm-12 col-xs-12">
+		<div class="row" style="font-family:arial;text-align:center;">
+             <b >
+               Please input following parameters to know the health of your tank engine.
+             </b>
+         </div>	
+	</div>
+ </div>
+
+ 
+  <div class="row">
+	<div class="main col-md-3 col-sm-8 col-xs-8">
+	</div>
+	<div class="main col-md-6 col-sm-12 col-xs-12">
+		<div class="row">
+             </br>
+             </br>
+         </div>	
+	</div>
+ </div>
+ 
+<form action ="/" method="get" style="font-size:20px;">
+<center>
+<fieldset style="display:inline-block;border:2px solid white;color:black;width:80%;">
+	
+		<label for="engine_life" class="col-sm-2 col-form-label col-form-label-lg">Engine Life</label>
+		
+	    <input  type="number" style="width:60%;height:5%;"class="form-control" name="engine_life" aria-describedby="elHelp" value="234" placeholder="234" min="0" max="1000" step="1">
+		
+	    <small id="elHelp" class="form-text text-muted">Real Engine Life in hours.</small>
+	
+	<br>
+	<br>
+	
+	
+		<label for="vibration" class="col-sm-2 col-form-label col-form-label-lg">Vibration</label>
+		
+	    <input type="number" style="width:60%;height:5%;" class="form-control" name="vibration" aria-describedby="vibHelp" value="261" placeholder="261" min="50" max="500" step="1">
+		
+	    <small id="vibHelp" class="form-text text-muted">Vibrations coming from engine.</small>
+	
+	<br>
+	<br>
+	
+		<label for="coolent_temp" class="col-sm-2 col-form-label col-form-label-lg">Coolant Temp</label>
+		
+	   	<input type="number" style="width:60%;height:5%;" class="form-control" name="coolent_temp" aria-describedby="ctHelp" value="55" placeholder="55" min="10" max="200" step="1">
+		
+	    <small id="ctHelp" class="form-text text-muted">Coolant Temperature in degree Celsius.</small>
+	
+	<br>
+	<br>
+	
+		<label for="oil_pressure" class="col-sm-2 col-form-label col-form-label-lg">Oil Pressure:</label>
+		
+	    <input type="decimal" style="width:60%;height:5%;" class="form-control" name="oil_pressure" aria-describedby="opHelp" value="9.3" placeholder="9.3" min="1.0" max="20.0" step="0.01">
+		
+	    <small id="opHelp" class="form-text text-muted">Oil pressure in Kg/cm2.</small>
+	
+	
+	<br>
+	<br>
+	
+		
+			<input type="submit" style="background-color:teal;color:white;height:10%;width:30%;font-size:40px;"class="btn btn-success btn-block" value="Submit"> 
+		
+	
+	</fieldset></center>
+</form>
+
+</div>
+</body>
+<script type="text/javascript" src="/jquery-3.3.1.min.js"></script>
+<script type="text/javascript" src="/bootstrap.min.js"></script>
+</html>
